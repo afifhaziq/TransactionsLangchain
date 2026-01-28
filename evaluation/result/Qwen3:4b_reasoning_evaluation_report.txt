@@ -1,0 +1,54 @@
+EVALUATION REPORT - Model: qwen3:4b
+===================================
+
+Summary:
+  Tests Passed: 9/10 (90.0%)
+  Average Overall Score: 95.8%
+  Average Latency: 73.20s
+  Average Tier 1 (Functional): 96.7%
+  Average Tier 2 (Retrieval): 100.0%
+  Average Tier 3 (Response): 90.0%
+Individual Test Results:
+
+TC001: How much did I spend in August 2023?
+  Status: PASS (Latency: 72.72s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC002: How much did I spend on restaurants in June 2023?
+  Status: PASS (Latency: 76.45s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC003: Show me my first 3 restaurant transactions
+  Status: PASS (Latency: 71.67s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC004: Show me top 5 most expensive expenses for groceries
+  Status: PASS (Latency: 84.45s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC005: What's my total income and spending in July 2023?
+  Status: PASS (Latency: 79.81s)
+  Overall: 87.5% | T1: 100.0% | T2: 100.0% | T3: 50.0%
+
+TC006: Show me my Ferrari purchases
+  Status: PASS (Latency: 48.53s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC007: Show me my largest Walmart purchases
+  Status: PASS (Latency: 109.33s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC008: What's my total spending across all transactions?
+  Status: PASS (Latency: 53.47s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%
+
+TC009: Show me my ATM withdrawals in June 2023, sorted by amount (smallest first)
+  Status: FAIL (Latency: 53.38s)
+  Overall: 70.8% | T1: 66.7% | T2: 100.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: Mismatch - Expected: [{'txn_id': 101841, 'txn_date': '28/06/2023 0:00', 'desc': 'Withdrawal ATM Out of Ntwk TS MINI MART-LI00990 3604 OATES ROAD HOUSTON TX ALI00990 Card 0029', 'merchant': None, 'cat': 'ATM', 'amt': -0.2, 'acc_id': 731, 'bank_id': 634}, {'txn_id': 169663, 'txn_date': '05/06/2023 0:00', 'desc': 'Surcharge ATM  W/D*6788 144 KING ST NORTHAMPTON MA 7033', 'merchant': None, 'cat': 'ATM', 'amt': -0.6, 'acc_id': 1058, 'bank_id': 922}, {'txn_id': 120532, 'txn_date': '22/06/2023 0:00', 'desc': 'NON-HUNTINGTON ATM CASH WITHDRAW', 'merchant': None, 'cat': 'ATM', 'amt': -0.7, 'acc_id': 507, 'bank_id': 444}, {'txn_id': 22682, 'txn_date': '23/06/2023 0:00', 'desc': 'ATM Withdrawal  VISA MONEY TRANSFER    C', 'merchant': None, 'cat': 'ATM', 'amt': -1.0, 'acc_id': 433, 'bank_id': 386}, {'txn_id': 21632, 'txn_date': '22/06/2023 0:00', 'desc': 'ATM Withdrawal  CASH APP*ZACHARY WI    C', 'merchant': 'CASH APP', 'cat': 'ATM', 'amt': -1.0, 'acc_id': 433, 'bank_id': 386}], Got: [{'txn_id': 122343, 'txn_date': '21/06/2023 0:00', 'desc': 'ATM WITHDRAWAL 008667 1036 FRANK', 'merchant': None, 'cat': 'ATM', 'amt': -408.0, 'acc_id': 575, 'bank_id': 504}, {'txn_id': 80693, 'txn_date': '21/06/2023 0:00', 'desc': 'ATM WITHDRAWAL 008667 1036 FRANK', 'merchant': None, 'cat': 'ATM', 'amt': -408.0, 'acc_id': 230, 'bank_id': 204}, {'txn_id': 119198, 'txn_date': '05/06/2023 0:00', 'desc': 'BKOFAMMaryse Hemant ATM 06/03 #3168 WITHDRWL                   WEST BRANDON       BRANDON       FL', 'merchant': None, 'cat': 'ATM', 'amt': -380.0, 'acc_id': 513, 'bank_id': 450}, {'txn_id': 137327, 'txn_date': '30/06/2023 0:00', 'desc': 'ATM WITHDRAWAL 000941 1036 BRO', 'merchant': None, 'cat': 'ATM', 'amt': -350.0, 'acc_id': 599, 'bank_id': 523}, {'txn_id': 163022, 'txn_date': '09/06/2023 0:00', 'desc': 'ATM WITHDRAWAL 008081 1036 WHIT', 'merchant': None, 'cat': 'ATM', 'amt': -340.0, 'acc_id': 799, 'bank_id': 696}]
+    - faithfulness: Faithfulness violations: Hallucinated transaction IDs: [80693, 119198, 122343, 137327, 163022]
+
+TC010: Compare my spending on restaurants vs groceries
+  Status: PASS (Latency: 82.16s)
+  Overall: 100.0% | T1: 100.0% | T2: 100.0% | T3: 100.0%

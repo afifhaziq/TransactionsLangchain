@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.cursor/
+.ruff_cache/
+
+# Virtual environments
+.venv
+.env
+
+# Data files - DO NOT commit sensitive data
+chroma_db/
+transactions.db
+*.csv
+*.db
+*.sqlite3
+data/
+analysis.html
+
+# Assessment files - company confidential
+AIassessment.md
+
+# Large data directories
+chroma_db/
+transactions.db

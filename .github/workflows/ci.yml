@@ -1,0 +1,170 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  # ===========================================
+  # Job 1: Linting with Ruff
+  # ===========================================
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      
+      - name: Install dependencies
+        run: uv sync --extra dev
+      
+      - name: Run Ruff linter
+        run: uv run ruff check .
+      
+      - name: Run Ruff formatter check
+        run: uv run ruff format --check .
+
+  # ===========================================
+  # Job 2: Unit Tests with pytest
+  # ===========================================
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: lint  # Only run tests if linting passes
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      
+      - name: Install dependencies
+        run: uv sync --extra dev
+      
+      - name: Run tests with coverage
+        run: |
+          uv run pytest tests/ -v \
+            --cov=evaluation \
+            --cov=src \
+            --cov-report=term-missing \
+            --cov-report=xml
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+
+  # ===========================================
+  # Job 3: Security Compliance Tests (Matrix)
+  # ===========================================
+  security:
+    name: Security - ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Valid queries (should pass security checks)
+          - name: "Valid SELECT"
+            sql: "SELECT * FROM transactions WHERE clnt_id = 880"
+            should_pass: true
+          
+          - name: "Valid aggregation"
+            sql: "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND amt < 0"
+            should_pass: true
+          
+          # SQL Injection attacks (should be blocked)
+          - name: "OR 1=1 injection"
+            sql: "SELECT * FROM t WHERE clnt_id = 880 OR 1=1"
+            should_pass: false
+          
+          - name: "UNION SELECT injection"
+            sql: "SELECT * FROM t WHERE clnt_id = 880 UNION SELECT * FROM users"
+            should_pass: false
+          
+          - name: "Comment injection"
+            sql: "SELECT * FROM t WHERE clnt_id = 880 --"
+            should_pass: false
+          
+          # Dangerous operations (should be blocked)
+          - name: "DROP TABLE attack"
+            sql: "DROP TABLE transactions"
+            should_pass: false
+          
+          - name: "DELETE operation"
+            sql: "DELETE FROM transactions WHERE clnt_id = 880"
+            should_pass: false
+          
+          - name: "UPDATE operation"
+            sql: "UPDATE transactions SET amt = 0 WHERE clnt_id = 880"
+            should_pass: false
+          
+          # Missing client_id (should be blocked)
+          - name: "Missing client_id"
+            sql: "SELECT * FROM transactions WHERE amt < 0"
+            should_pass: false
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      
+      - name: Install dependencies
+        run: uv sync --extra dev
+      
+      - name: "Test: ${{ matrix.name }}"
+        run: |
+          uv run python -c "
+          import tempfile
+          from evaluation.tier1_functional import FunctionalEvaluator
+
+          # Create empty DB for evaluator instantiation
+          with tempfile.NamedTemporaryFile(suffix='.db', delete=False) as f:
+              db_path = f.name
+
+          evaluator = FunctionalEvaluator(db_path)
+
+          sql = '''${{ matrix.sql }}'''
+          score, detail = evaluator.evaluate_security_compliance(sql, 880)
+
+          should_pass = '${{ matrix.should_pass }}' == 'true'
+
+          if should_pass:
+              assert score == 1.0, f'Expected PASS but got score {score}: {detail}'
+              print('✅ PASS: ${{ matrix.name }}')
+          else:
+              assert score == 0.0, f'Expected BLOCK but got score {score}: {detail}'
+              print('🛡️ BLOCKED: ${{ matrix.name }} - ' + detail)
+
+          evaluator.close()
+          "

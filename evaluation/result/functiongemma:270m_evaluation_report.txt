@@ -1,0 +1,106 @@
+EVALUATION REPORT - Model: functiongemma:270m
+=============================================
+
+Summary:
+  Tests Passed: 0/10 (0.0%)
+  Average Overall Score: 32.5%
+  Average Latency: 0.83s
+  Average Tier 1 (Functional): 10.0%
+  Average Tier 2 (Retrieval): 50.0%
+  Average Tier 3 (Response): 60.0%
+Individual Test Results:
+
+TC001: How much did I spend in August 2023?
+  Status: FAIL (Latency: 1.87s)
+  Overall: 37.5% | T1: 0.0% | T2: 100.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - amounts: No amounts found in response
+
+TC002: How much did I spend on restaurants in June 2023?
+  Status: FAIL (Latency: 0.37s)
+  Overall: 12.5% | T1: 0.0% | T2: 0.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - vector_search_usage: Vector search should have been called
+    - retrieval_relevance: No vector search performed but expected terms required
+    - amounts: No amounts found in response
+
+TC003: Show me my first 3 restaurant transactions
+  Status: FAIL (Latency: 2.89s)
+  Overall: 37.5% | T1: 0.0% | T2: 100.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - amounts: No amounts found in response
+
+TC004: Show me top 5 most expensive expenses for groceries
+  Status: FAIL (Latency: 0.34s)
+  Overall: 12.5% | T1: 0.0% | T2: 0.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - vector_search_usage: Vector search should have been called
+    - retrieval_relevance: No vector search performed but expected terms required
+    - amounts: No amounts found in response
+
+TC005: What's my total income and spending in July 2023?
+  Status: FAIL (Latency: 0.48s)
+  Overall: 37.5% | T1: 0.0% | T2: 100.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - amounts: No amounts found in response
+
+TC006: Show me my Ferrari purchases
+  Status: FAIL (Latency: 0.48s)
+  Overall: 75.0% | T1: 100.0% | T2: 0.0% | T3: 100.0%
+  Issues:
+    - vector_search_usage: Vector search should have been called
+    - retrieval_relevance: No vector search performed but expected terms required
+
+TC007: Show me my largest Walmart purchases
+  Status: FAIL (Latency: 0.37s)
+  Overall: 12.5% | T1: 0.0% | T2: 0.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - vector_search_usage: Vector search should have been called
+    - retrieval_relevance: No vector search performed but expected terms required
+    - amounts: No amounts found in response
+
+TC008: What's my total spending across all transactions?
+  Status: FAIL (Latency: 0.36s)
+  Overall: 37.5% | T1: 0.0% | T2: 100.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - amounts: No amounts found in response
+
+TC009: Show me my ATM withdrawals in June 2023, sorted by amount (smallest first)
+  Status: FAIL (Latency: 0.78s)
+  Overall: 50.0% | T1: 0.0% | T2: 100.0% | T3: 100.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+
+TC010: Compare my spending on restaurants vs groceries
+  Status: FAIL (Latency: 0.36s)
+  Overall: 12.5% | T1: 0.0% | T2: 0.0% | T3: 50.0%
+  Issues:
+    - execution_accuracy: No SQL generated
+    - validity: No SQL to validate
+    - security: No SQL to check
+    - vector_search_usage: Vector search should have been called
+    - retrieval_relevance: No vector search performed but expected terms required
+    - amounts: No amounts found in response

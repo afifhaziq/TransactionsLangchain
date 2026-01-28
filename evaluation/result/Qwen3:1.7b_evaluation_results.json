@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "model": "qwen3:1.7b",
+    "reasoning": true
+  },
+  "results": [
+    {
+      "test_id": "TC001",
+      "question": "How much did I spend in August 2023?",
+      "passed": false,
+      "overall_score": 0.6458333333333333,
+      "latency_seconds": 13.912959098815918,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 0.75,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND (cat = 'spending' OR desc LIKE '%spending%') AND txn_date LIKE '%/08/2023%' AND amt < 0 LIMIT 5",
+      "response": "In August 2023, you spent $10. This transaction occurred on April 8, 2023, via Zelle to account NATASHA. The details are as follows:\n\n- **Transaction ID**: 182646  \n- **Date**: 04/08/2023  \n- **Description**: Zelle payment to NATASHA for \"Maryse Hemant spending money\"; Conf# kf6yraqkv  \n- **Merchant**: Zelle  \n- **Category**: Transfer Debit  \n- **Amount**: $-10.00  \n- **Account ID**: 608  \n- **Bank ID**: 530  \n\nNo other spending records were found in this timeframe."
+    },
+    {
+      "test_id": "TC002",
+      "question": "How much did I spend on restaurants in June 2023?",
+      "passed": false,
+      "overall_score": 0.7083333333333333,
+      "latency_seconds": 18.621858835220337,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' AND txn_date LIKE '%/06/2023%' AND amt < 0 LIMIT 5",
+      "response": "I spent a total of $13.40 on restaurants in June 2023. Here are the detailed transactions:  \n1. **Transaction ID**: 4411, **Date**: 16/06/2023, **Description**: Point of Sale Debit L340 DATE 06-15 STORE*CHICK-FIL-A WWW DOORDASH, **Merchant**: DOORDASH, **Amount**: $-8.38, **Account ID**: 953, **Bank ID**: 828  \n2. **Transaction ID**: 111475, **Date**: 12/06/2023, **Description**: CHECK111, **Merchant**: None, **Amount**: $-1.50, **Account ID**: 954, **Bank ID**: 829  \n3. **Transaction ID**: 4671"
+    },
+    {
+      "test_id": "TC003",
+      "question": "Show me my first 3 restaurant transactions",
+      "passed": true,
+      "overall_score": 0.8333333333333333,
+      "latency_seconds": 17.16108536720276,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT * FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' AND merchant IN ('FOOD SHOP', 'Food4less', 'ALPHA RESTAURANT') AND txn_date LIKE '%/05/01/2026%' LIMIT 3",
+      "response": "Here are your first 3 restaurant transactions from May 1, 2026:  \n\n1. **Transaction ID**: 12345  \n   **Date**: 01/05/2026  \n   **Description**: Dinner at ALPHA RESTAURANT  \n   **Merchant**: ALPHA RESTAURANT  \n   **Category**: Restaurants  \n   **Amount**: $-120.00  \n   **Account ID**: 98765  \n   **Bank ID**: 123  \n\n2. **Transaction ID**: 67890  \n   **Date**: 01/05/2026  \n   **Description**: Lunch at FOOD SHOP  \n   **Merchant**: FOOD SHOP  \n   **Category**: Restaurants  \n   **Amount**: $-85.50  \n "
+    },
+    {
+      "test_id": "TC004",
+      "question": "Show me top 5 most expensive expenses for groceries",
+      "passed": true,
+      "overall_score": 0.8333333333333333,
+      "latency_seconds": 21.34881591796875,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT ALL FROM transactions WHERE clnt_id = 880 AND cat = 'Supermarkets and Groceries' AND amt < 0 ORDER BY ABS(amt) DESC LIMIT 5",
+      "response": "Here are the top 5 most expensive grocery expenses for June 2023:  \n\n1. **Transaction ID**: 159083  \n   **Date**: 13/09/2023  \n   **Description**: PURCHASE AUTHORIZED ON 09/13 WAL-MART #3731  \n   **Merchant**: Walmart  \n   **Category**: Supermarkets and Groceries  \n   **Amount**: $-531.80  \n   **Account ID**: 1062  \n   **Bank ID**: 925  \n\n2. **Transaction ID**: 14280  \n   **Date**: 28/07/2023  \n   **Description**: PURCHASE AUTHORIZED ON 07/28 WM SUPERC Wal-Mart Sup  \n   **Merchant**: Wal-Mart  \n"
+    },
+    {
+      "test_id": "TC005",
+      "question": "What's my total income and spending in July 2023?",
+      "passed": false,
+      "overall_score": 0.6458333333333333,
+      "latency_seconds": 26.334890842437744,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 0.75,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT ALL FROM transactions WHERE clnt_id = 880 AND (cat = 'Interest' OR desc LIKE '%Interest%') AND txn_date LIKE '%/07/2023%' AND (amt > 0 OR amt < 0) LIMIT 5",
+      "response": "Total income for July 2023: $0.06  \nNo spending recorded in July 2023."
+    },
+    {
+      "test_id": "TC006",
+      "question": "Show me my Ferrari purchases",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 9.827870607376099,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "",
+      "response": "I couldn't find any transactions matching 'Ferrari' purchases. The vector_search tool returned merchants like Nissan and Chrysler, but no specific Ferrari-related transactions were found in the database."
+    },
+    {
+      "test_id": "TC007",
+      "question": "Show me my largest Walmart purchases",
+      "passed": true,
+      "overall_score": 0.8333333333333333,
+      "latency_seconds": 18.796016693115234,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT ALL FROM transactions WHERE clnt_id = 880 AND merchant IN ('Walmart', 'Wal-Mart', 'WAL-MART', 'Wal-Mart Super', 'Best Buy', 'WALMART') AND amt > 0 ORDER BY amt DESC LIMIT 5",
+      "response": "Here are your largest Walmart purchases in June 2023:  \n\n1. **Transaction ID**: 880, **Date**: 27/06/2023, **Description**: Department Stores, **Amount**: $0.886, **Account ID**: 74, **Bank ID**: 119074  \n2. **Transaction ID**: 592, **Date**: 08/06/2023, **Description**: Supermarkets and Groceries, **Amount**: $0.868, **Account ID**: 681, **Bank ID**: 164090  \n3. **Transaction ID**: 567, **Date**: 18/07/2023, **Description**: Department Stores, **Amount**: $0.84, **Account ID**: 649, **Bank ID**"
+    },
+    {
+      "test_id": "TC008",
+      "question": "What's my total spending across all transactions?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 15.1583993434906,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) AS total_spending FROM transactions WHERE clnt_id = 880 AND amt < 0",
+      "response": "I couldn't find any transactions matching your criteria. The total spending across all transactions is $-2,472,806.78. This value represents the sum of all negative amount entries in the transactions table for client_id 880."
+    },
+    {
+      "test_id": "TC009",
+      "question": "Show me my ATM withdrawals in June 2023, sorted by amount (smallest first)",
+      "passed": false,
+      "overall_score": 0.7083333333333333,
+      "latency_seconds": 18.150656938552856,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT * FROM transactions WHERE clnt_id = 880 AND cat = 'ATM' AND txn_date LIKE '%/06/2023%' AND amt < 0 ORDER BY amt",
+      "response": "### Key Observations from the Data:\n\n1. **Most Frequent Category**:  \n   - **\"ATM\"** is the most common category, appearing **over 80 times**.  \n   - This suggests **cash ATM withdrawals** are the primary activity.\n\n2. **Other Categories**:  \n   - **\"PNC BANK\"** and **\"BKOFAM\"** appear **around 10 times** each, indicating **bank-specific ATM usage**.  \n   - **\"NON-WF\"** and **\"NON-HUNTINGTON\"** are less frequent (around 8 times each), likely referring to **non-specific or regional ATM services**"
+    },
+    {
+      "test_id": "TC010",
+      "question": "Compare my spending on restaurants vs groceries",
+      "passed": false,
+      "overall_score": 0.7083333333333333,
+      "latency_seconds": 63.283710956573486,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT ALL FROM transactions WHERE clnt_id = 880 AND cat = 'Supermarkets and Groceries' AND (merchant LIKE '%GROCERY%' OR merchant LIKE '%GROCERS%') AND txn_date LIKE '%/05/2026%' AND amt < 0 LIMIT 5",
+      "response": "I couldn't find any transactions matching your criteria. There are no restaurant or grocery expenditures recorded for May 2026."
+    }
+  ]
+}

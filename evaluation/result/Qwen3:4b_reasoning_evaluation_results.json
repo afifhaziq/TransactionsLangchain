@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "model": "qwen3:4b",
+    "reasoning": true
+  },
+  "results": [
+    {
+      "test_id": "TC001",
+      "question": "How much did I spend in August 2023?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 72.71500301361084,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/08/2023%' AND amt < 0",
+      "response": "You spent $-638,532.93 in August 2023."
+    },
+    {
+      "test_id": "TC002",
+      "question": "How much did I spend on restaurants in June 2023?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 76.45143842697144,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) AS total_spent FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' AND txn_date LIKE '%/06/2023%' AND amt < 0",
+      "response": "You spent a total of $-32,394.36 on restaurants in June 2023."
+    },
+    {
+      "test_id": "TC003",
+      "question": "Show me my first 3 restaurant transactions",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 71.66995763778687,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' ORDER BY txn_date ASC LIMIT 3",
+      "response": "Here are your first 3 restaurant transactions:\n\n- Transaction ID: 114224  \n  Date: 01/06/2023 0:00  \n  Description: McDonald's  \n  Merchant: MCDONALD'S  \n  Category: Restaurants  \n  Amount: $-2.22  \n  Account ID: 1004  \n  Bank ID: 872  \n\n- Transaction ID: 46120  \n  Date: 01/06/2023 0:00  \n  Description: Debit Purchase -visa Maryse Hemant Cincinnati Oh 05/30 Card 0198  \n  Merchant: N/A  \n  Category: Restaurants  \n  Amount: $-3.29  \n  Account ID: 1090  \n  Bank ID: 952  \n\n- Transaction ID: 156183  "
+    },
+    {
+      "test_id": "TC004",
+      "question": "Show me top 5 most expensive expenses for groceries",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 84.44511127471924,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Supermarkets and Groceries' AND amt < 0 ORDER BY ABS(amt) DESC LIMIT 5",
+      "response": "Here are the top 5 most expensive grocery expenses:\n\n- Transaction ID: 159083  \n  Date: 13/09/2023 0:00  \n  Description: PURCHASE AUTHORIZED ON 09/13 WAL-MART #3731 BERNALILLO NM P000000673261747 111  \n  Merchant: Walmart  \n  Category: Supermarkets and Groceries  \n  Amount: $-531.80  \n  Account ID: 1062  \n  Bank ID: 925  \n\n- Transaction ID: 14280  \n  Date: 28/07/2023 0:00  \n  Description: PURCHASE AUTHORIZED ON 07/28 WM SUPERC Wal-Mart Sup ESPANOLA P000000773006097 111  \n  Merchant: Wal-Mart  \n "
+    },
+    {
+      "test_id": "TC005",
+      "question": "What's my total income and spending in July 2023?",
+      "passed": true,
+      "overall_score": 0.875,
+      "latency_seconds": 79.81376624107361,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT SUM(CASE WHEN amt > 0 THEN amt ELSE 0 END) AS total_income, SUM(CASE WHEN amt < 0 THEN amt ELSE 0 END) AS total_spending FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/07/2023%'",
+      "response": "Your total income for July 2023 was $776.68.\n\nYour total spending for July 2023 was -$602,027.27."
+    },
+    {
+      "test_id": "TC006",
+      "question": "Show me my Ferrari purchases",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 48.527748107910156,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND merchant = 'Ferrari' LIMIT 5",
+      "response": "I couldn't find any transactions matching your criteria for \"Ferrari\" purchases. None of your transactions show a merchant named \"Ferrari\" in the database."
+    },
+    {
+      "test_id": "TC007",
+      "question": "Show me my largest Walmart purchases",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 109.32705307006836,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND (merchant IN ('Walmart', 'Wal-Mart', 'WAL-MART', 'Wal-Mart Super', 'WALMART')) AND amt < 0 ORDER BY ABS(amt) DESC LIMIT 5",
+      "response": "Here are your largest Walmart purchases (most expensive first):\n\n- Transaction ID: 159083  \n  Date: 13/09/2023 0:00  \n  Description: PURCHASE AUTHORIZED ON 09/13 WAL-MART #3731 BERNALILLO NM P000000673261747 111  \n  Merchant: Walmart  \n  Category: Supermarkets and Groceries  \n  Amount: $-531.80  \n  Account ID: 1062  \n  Bank ID: 925  \n\n- Transaction ID: 14280  \n  Date: 28/07/2023 0:00  \n  Description: PURCHASE AUTHORIZED ON 07/28 WM SUPERC Wal-Mart Sup ESPANOLA P000000773006097 111  \n  Merchant: "
+    },
+    {
+      "test_id": "TC008",
+      "question": "What's my total spending across all transactions?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 53.469061613082886,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND amt < 0",
+      "response": "Your total spending across all transactions is $-2,472,806.78."
+    },
+    {
+      "test_id": "TC009",
+      "question": "Show me my ATM withdrawals in June 2023, sorted by amount (smallest first)",
+      "passed": false,
+      "overall_score": 0.7083333333333333,
+      "latency_seconds": 53.37730598449707,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/06/2023%' AND cat = 'ATM' AND amt < 0 ORDER BY amt ASC LIMIT 5",
+      "response": "Here are your ATM withdrawals in June 2023, sorted from smallest to largest amount:\n\n- Transaction ID: 122343  \n  Date: 21/06/2023 0:00  \n  Description: ATM WITHDRAWAL 008667 1036 FRANK  \n  Merchant: N/A  \n  Category: ATM  \n  Amount: $-408.00  \n  Account ID: 575  \n  Bank ID: 504  \n\n- Transaction ID: 80693  \n  Date: 21/06/2023 0:00  \n  Description: ATM WITHDRAWAL 008667 1036 FRANK  \n  Merchant: N/A  \n  Category: ATM  \n  Amount: $-408.00  \n  Account ID: 230  \n  Bank ID: 204  \n\n- Transaction ID: 11"
+    },
+    {
+      "test_id": "TC010",
+      "question": "Compare my spending on restaurants vs groceries",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 82.16361260414124,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT cat, SUM(amt) AS total_spending FROM transactions WHERE clnt_id = 880 AND (cat = 'Restaurants' OR cat = 'Supermarkets and Groceries') AND amt < 0 GROUP BY cat",
+      "response": "I found your spending details:\n\n- Restaurants: $-138,827.69\n- Supermarkets and Groceries: $-150,189.55\n\nYou spent more on groceries (-$150,189.55) than restaurants (-$138,827.69)."
+    }
+  ]
+}

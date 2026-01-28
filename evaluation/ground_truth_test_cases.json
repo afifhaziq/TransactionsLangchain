@@ -1,0 +1,360 @@
+[
+  {
+    "test_id": "TC001",
+    "category": "simple_aggregation",
+    "question": "How much did I spend in August 2023?",
+    "client_id": 880,
+    "need_vector": false,
+    "golden_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND amt < 0 AND txn_date LIKE '%/08/2023%'",
+    "golden_output": [
+      {
+        "total_spending": -638532.9259999953
+      }
+    ],
+    "expected_amount": -638532.9259999953
+  },
+  {
+    "test_id": "TC002",
+    "category": "category_filtering",
+    "question": "How much did I spend on restaurants in June 2023?",
+    "client_id": 880,
+    "need_vector": true,
+    "expected_search_terms": [
+      "restaurants"
+    ],
+    "golden_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND amt < 0 AND cat = 'Restaurants' AND txn_date LIKE '%/06/2023%'",
+    "golden_output": [
+      {
+        "total_spending": -32394.36400000005
+      }
+    ],
+    "expected_amount": -32394.364000000012
+  },
+  {
+    "test_id": "TC003",
+    "category": "transaction_list",
+    "question": "Show me my first 3 restaurant transactions",
+    "client_id": 880,
+    "need_vector": true,
+    "expected_search_terms": [
+      "restaurant"
+    ],
+    "golden_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' AND amt < 0 ORDER BY txn_date LIMIT 3",
+    "golden_output": [
+      {
+        "txn_id": 114224,
+        "txn_date": "01/06/2023 0:00",
+        "desc": "McDonald's",
+        "merchant": "MCDONALD'S",
+        "cat": "Restaurants",
+        "amt": -2.22,
+        "acc_id": 1004,
+        "bank_id": 872
+      },
+      {
+        "txn_id": 46120,
+        "txn_date": "01/06/2023 0:00",
+        "desc": "Debit Purchase -visa Maryse Hemant Cincinnati Oh 05/30 Card 0198",
+        "merchant": null,
+        "cat": "Restaurants",
+        "amt": -3.29,
+        "acc_id": 1090,
+        "bank_id": 952
+      },
+      {
+        "txn_id": 156183,
+        "txn_date": "01/06/2023 0:00",
+        "desc": "DUNKIN #345684 Q35 YONKERS NY 05/31",
+        "merchant": "DUNKIN",
+        "cat": "Restaurants",
+        "amt": -0.67,
+        "acc_id": 1108,
+        "bank_id": 970
+      }
+    ],
+    "expected_txn_ids": [
+      114224,
+      46120,
+      156183
+    ]
+  },
+  {
+    "test_id": "TC004",
+    "category": "amount_filtering",
+    "question": "Show me top 5 most expensive expenses for groceries",
+    "client_id": 880,
+    "expected_search_terms": [
+      "groceries"
+    ],
+    "golden_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Supermarkets and Groceries' AND amt < 0 ORDER BY amt LIMIT 5",
+    "golden_output": [
+      {
+        "txn_id": 159083,
+        "txn_date": "13/09/2023 0:00",
+        "desc": "PURCHASE                                AUTHORIZED ON   09/13 WAL-MART #3731            BERNALILLO    NM  P000000673261747   111",
+        "merchant": "Walmart",
+        "cat": "Supermarkets and Groceries",
+        "amt": -531.80,
+        "acc_id": 1062,
+        "bank_id": 925
+      },
+      {
+        "txn_id": 14280,
+        "txn_date": "28/07/2023 0:00",
+        "desc": "PURCHASE                                AUTHORIZED ON   07/28 WM SUPERC Wal-Mart Sup    ESPANOLA          P000000773006097   111",
+        "merchant": "Wal-Mart",
+        "cat": "Supermarkets and Groceries",
+        "amt": -471.748,
+        "acc_id": 1062,
+        "bank_id": 925
+      },
+      {
+        "txn_id": 164542,
+        "txn_date": "05/07/2023 0:00",
+        "desc": "WAL Wal-Mart Super 0 DENHAM SPRING LA814738 07/05",
+        "merchant": "Wal-Mart",
+        "cat": "Supermarkets and Groceries",
+        "amt": -466.4,
+        "acc_id": 808,
+        "bank_id": 705
+      },
+      {
+        "txn_id": 18221,
+        "txn_date": "08/08/2023 0:00",
+        "desc": "PURCHASE WAL-MART #2215",
+        "merchant": "WAL-MART",
+        "cat": "Supermarkets and Groceries",
+        "amt": -453.6,
+        "acc_id": 507,
+        "bank_id": 444
+      },
+      {
+        "txn_id": 132076,
+        "txn_date": "06/09/2023 0:00",
+        "desc": "WM SUPERCENTER #5982Wal-MSACRAMENTO CA",
+        "merchant": "Walmart",
+        "cat": "Supermarkets and Groceries",
+        "amt": 436.42,
+        "acc_id": 635,
+        "bank_id": 556
+      }
+    ],
+    "expected_txn_ids": [
+      159083,
+      14280,
+      164542,
+      18221,
+      132076
+    ],
+    "need_vector": true
+  },
+  {
+    "test_id": "TC005",
+    "category": "income_vs_spending",
+    "question": "What's my total income and spending in July 2023?",
+    "client_id": 880,
+    "golden_sql": "SELECT SUM(CASE WHEN amt > 0 THEN amt ELSE 0 END) AS total_income, SUM(CASE WHEN amt < 0 THEN amt ELSE 0 END) AS total_spending FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/07/2023%'",
+    "golden_output": [
+      {
+        "total_spending": -602027.2679999954,
+        "total_income": 776.6800000000013
+      }
+    ],
+    "expected_spending": -602027.2679999954,
+    "expected_income": 776.6800000000013,
+    "need_vector": false
+  },
+  {
+    "test_id": "TC006",
+    "category": "empty_result",
+    "question": "Show me my Ferrari purchases",
+    "client_id": 880,
+    "expected_search_terms": [
+      "Ferrari"
+    ],
+    "golden_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND (desc LIKE '%Ferrari%' OR desc LIKE '%Lamborghini%' OR merchant LIKE '%Ferrari%') LIMIT 10",
+    "golden_output": [],
+    "expected_count": 0,
+    "need_vector": true
+  },
+  {
+    "test_id": "TC007",
+    "category": "merchant_filtering",
+    "question": "Show me my largest Walmart purchases",
+    "client_id": 880,
+    "expected_search_terms": [
+      "Walmart"
+    ],
+    "golden_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND (merchant LIKE '%Walmart%' OR merchant LIKE '%Wal-Mart%' OR merchant LIKE '%WAL-MART%') AND amt < 0 ORDER BY amt LIMIT 5",
+    "golden_output": [
+      {
+        "txn_id": 159083,
+        "txn_date": "13/09/2023 0:00",
+        "desc": "PURCHASE                                AUTHORIZED ON   09/13 WAL-MART #3731            BERNALILLO    NM  P000000673261747   111",
+        "merchant": "Walmart",
+        "cat": "Supermarkets and Groceries",
+        "amt": -531.80,
+        "acc_id": 1062,
+        "bank_id": 925
+      },
+      {
+        "txn_id": 14280,
+        "txn_date": "28/07/2023 0:00",
+        "desc": "PURCHASE                                AUTHORIZED ON   07/28 WM SUPERC Wal-Mart Sup    ESPANOLA          P000000773006097   111",
+        "merchant": "Wal-Mart",
+        "cat": "Supermarkets and Groceries",
+        "amt": -471.748,
+        "acc_id": 1062,
+        "bank_id": 925
+      },
+      {
+        "txn_id": 164542,
+        "txn_date": "05/07/2023 0:00",
+        "desc": "WAL Wal-Mart Super 0 DENHAM SPRING LA814738 07/05",
+        "merchant": "Wal-Mart",
+        "cat": "Supermarkets and Groceries",
+        "amt": -466.4,
+        "acc_id": 808,
+        "bank_id": 705
+      },
+      {
+        "txn_id": 18221,
+        "txn_date": "08/08/2023 0:00",
+        "desc": "PURCHASE WAL-MART #2215",
+        "merchant": "WAL-MART",
+        "cat": "Supermarkets and Groceries",
+        "amt": -453.6,
+        "acc_id": 507,
+        "bank_id": 444
+      },
+      {
+        "txn_id": 132076,
+        "txn_date": "06/09/2023 0:00",
+        "desc": "WM SUPERCENTER #5982Wal-MSACRAMENTO CA",
+        "merchant": "Walmart",
+        "cat": "Supermarkets and Groceries",
+        "amt": 436.42,
+        "acc_id": 635,
+        "bank_id": 556
+      }
+    ],
+    "expected_txn_ids": [
+      159083,
+      14280,
+      164542,
+      18221,
+      132076
+    ],
+    "need_vector": true
+  },
+  {
+    "test_id": "TC008",
+    "category": "total_aggregation",
+    "question": "What's my total spending across all transactions?",
+    "client_id": 880,
+    "golden_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND amt < 0",
+    "golden_output": [
+      {
+        "total_spending": -2472806.7840000163
+      }
+    ],
+    "expected_amount": -2472806.7840000163,
+    "need_vector": false
+  },
+  {
+    "test_id": "TC009",
+    "category": "category_date_filtering",
+    "question": "Show me my ATM withdrawals in June 2023, sorted by amount (smallest first)",
+    "client_id": 880,
+    "expected_search_terms": [
+      "ATM"
+    ],
+    "golden_sql": "\nSELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id\nFROM transactions \nWHERE clnt_id = 880 \n  AND cat = 'ATM' \n  AND amt < 0 \n  AND txn_date LIKE '%/06/2023%'\nORDER BY amt DESC\nLIMIT 5\n",
+    "golden_output": [
+      {
+        "txn_id": 101841,
+        "txn_date": "28/06/2023 0:00",
+        "desc": "Withdrawal ATM Out of Ntwk TS MINI MART-LI00990 3604 OATES ROAD HOUSTON TX ALI00990 Card 0029",
+        "merchant": null,
+        "cat": "ATM",
+        "amt": -0.2,
+        "acc_id": 731,
+        "bank_id": 634
+      },
+      {
+        "txn_id": 169663,
+        "txn_date": "05/06/2023 0:00",
+        "desc": "Surcharge ATM  W/D*6788 144 KING ST NORTHAMPTON MA 7033",
+        "merchant": null,
+        "cat": "ATM",
+        "amt": -0.6,
+        "acc_id": 1058,
+        "bank_id": 922
+      },
+      {
+        "txn_id": 120532,
+        "txn_date": "22/06/2023 0:00",
+        "desc": "NON-HUNTINGTON ATM CASH WITHDRAW",
+        "merchant": null,
+        "cat": "ATM",
+        "amt": -0.7,
+        "acc_id": 507,
+        "bank_id": 444
+      },
+      {
+        "txn_id": 22682,
+        "txn_date": "23/06/2023 0:00",
+        "desc": "ATM Withdrawal  VISA MONEY TRANSFER    C",
+        "merchant": null,
+        "cat": "ATM",
+        "amt": -1.0,
+        "acc_id": 433,
+        "bank_id": 386
+      },
+      {
+        "txn_id": 21632,
+        "txn_date": "22/06/2023 0:00",
+        "desc": "ATM Withdrawal  CASH APP*ZACHARY WI    C",
+        "merchant": "CASH APP",
+        "cat": "ATM",
+        "amt": -1.0,
+        "acc_id": 433,
+        "bank_id": 386
+      }
+    ],
+    "expected_txn_ids": [
+      101841,
+      169663,
+      120532,
+      22682,
+      21632
+    ],
+    "need_vector": true
+  },
+  {
+    "test_id": "TC010",
+    "category": "category_comparison",
+    "question": "Compare my spending on restaurants vs groceries",
+    "client_id": 880,
+    "expected_search_terms": [
+      "restaurants",
+      "groceries"
+    ],
+    "golden_sql": "\nSELECT \n    cat,\n    SUM(amt) as total_spending\nFROM transactions \nWHERE clnt_id = 880 \n  AND amt < 0 \n  AND cat IN ('Restaurants', 'Supermarkets and Groceries')\nGROUP BY cat\nORDER BY total_spending\n",
+    "golden_output": [
+      {
+        "cat": "Supermarkets and Groceries",
+        "total_spending": -150189.54599999945
+      },
+      {
+        "cat": "Restaurants",
+        "total_spending": -138827.692
+      }
+    ],
+    "expected_categories": [
+      "Supermarkets and Groceries",
+      "Restaurants"
+    ],
+    "need_vector": true
+  }
+]

@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "model": "qwen3:4b",
+    "reasoning": false
+  },
+  "results": [
+    {
+      "test_id": "TC001",
+      "question": "How much did I spend in August 2023?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 60.31748390197754,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/08/2023%' AND amt < 0",
+      "response": "Okay, let's see. The user asked how much they spent in August 2023. I first checked if vector_search was needed, but since they didn't mention any specific categories or merchants, I skipped that step. Then I constructed the SQL query to sum the negative amounts (spending) where the transaction date is in August 2023 (using the LIKE pattern for DD/MM/YYYY format). The query was: SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/08/2023%' AND amt < 0.\n\nI called the sql_db"
+    },
+    {
+      "test_id": "TC002",
+      "question": "How much did I spend on restaurants in June 2023?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 91.7970130443573,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' AND txn_date LIKE '%/06/2023%' AND amt < 0",
+      "response": "Okay, let me process this step by step. The user asked how much they spent on restaurants in June 2023. \n\nFirst, I used vector_search for \"restaurants\" to get the exact category name from the database. The result showed that the category is 'Restaurants' (with a capital R). Then, I constructed an SQL query to sum the negative amounts (spending) where the category is 'Restaurants', client ID is 880, and the transaction date is in June 2023 (formatted as DD/MM/YYYY).\n\nThe SQL query was executed vi"
+    },
+    {
+      "test_id": "TC003",
+      "question": "Show me my first 3 restaurant transactions",
+      "passed": true,
+      "overall_score": 0.875,
+      "latency_seconds": 73.1377227306366,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Restaurants' ORDER BY txn_date ASC LIMIT 3",
+      "response": "Okay, let's see. The user asked for their first 3 restaurant transactions. I used vector_search first for \"restaurants\" and got the category as 'Restaurants'. Then I constructed the SQL query to get transactions where clnt_id is 880, category is 'Restaurants', ordered by date ascending, limited to 3.\n\nThe tool response gave three transactions. Now I need to format each one according to the required structure. Let me check the fields:\n\nEach transaction has txn_id, txn_date, desc, merchant, cat, a"
+    },
+    {
+      "test_id": "TC004",
+      "question": "Show me top 5 most expensive expenses for groceries",
+      "passed": true,
+      "overall_score": 0.875,
+      "latency_seconds": 86.42085719108582,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'Supermarkets and Groceries' AND amt < 0 ORDER BY amt ASC LIMIT 5;",
+      "response": "Okay, let's see. The user asked for the top 5 most expensive expenses for groceries. I first used vector_search to find the exact category name, which turned out to be \"Supermarkets and Groceries\". Then I constructed an SQL query to get transactions where the category matches, amount is negative (spending), ordered by amount ascending (so most expensive first), limited to 5.\n\nThe tool response gives 5 transactions. Now I need to format each transaction according to the required structure. Each e"
+    },
+    {
+      "test_id": "TC005",
+      "question": "What's my total income and spending in July 2023?",
+      "passed": true,
+      "overall_score": 0.875,
+      "latency_seconds": 73.89004158973694,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT SUM(CASE WHEN amt > 0 THEN amt ELSE 0 END) AS total_income, SUM(CASE WHEN amt < 0 THEN amt ELSE 0 END) AS total_spending FROM transactions WHERE clnt_id = 880 AND txn_date LIKE '%/07/2023%'",
+      "response": "Okay, let's see. The user asked for their total income and spending in July 2023.\n\nFirst, I called the sql_db_query tool\u309b with the correct SQL statement to get the sums. The response came back with (776.68, -602027.268). Wait, that seems a bit odd because the numbers are in a tuple. Let me check the SQL query again.\n\nThe query was: SELECT SUM(CASE WHEN amt > 0 THEN amt ELSE 0 END) AS total_income, SUM(CASE WHEN amt < 0 THEN amt ELSE 0 END) AS total_spending FROM transactions WHERE clnt_id = 880 "
+    },
+    {
+      "test_id": "TC006",
+      "question": "Show me my Ferrari purchases",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 61.90878891944885,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND (merchant LIKE '%Ferrari%' OR cat LIKE '%Ferrari%') AND amt < 0 LIMIT 5",
+      "response": "Okay, let me try to figure out what's going on here. The user asked for \"my Ferrari purchases\". I first used vector_search for \"Ferrari\" but the results didn't include any merchants named Ferrari. The tool response showed a list of other auto-related merchants like Nissan, Rafael Motors, etc.\n\nSo, I constructed an SQL query to look for transactions where the merchant or category contains \"Ferrari\" and the amount is negative (spending). I called sql_db_query with that query. The response from the"
+    },
+    {
+      "test_id": "TC007",
+      "question": "Show me my largest Walmart purchases",
+      "passed": true,
+      "overall_score": 0.8333333333333333,
+      "latency_seconds": 70.00955963134766,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND merchant = 'Walmart' AND amt < 0 ORDER BY ABS(amt) DESC LIMIT 5",
+      "response": "Okay, let me process this. The user asked for their largest Walmart purchases. I first used vector_search to find the exact merchant value for \"Walmart\", which returned 'Walmart' as the first result. Then I constructed an SQL query to get transactions where merchant is 'Walmart', client_id is 880, amount is negative (spending), ordered by absolute amount descending, limited to 5 results.\n\nThe tool response gave 5 transactions. Now I need to format each transaction according to the specified stru"
+    },
+    {
+      "test_id": "TC008",
+      "question": "What's my total spending across all transactions?",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 32.8501341342926,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT SUM(amt) FROM transactions WHERE clnt_id = 880 AND amt < 0",
+      "response": "Okay, let me process this. The user asked for their total spending across all transactions. I ran the SQL query to sum the negative amounts (since spending is negative in the database) for client_id 880. The tool response came back with (-2472806.784,).\n\nWait, the response is a tuple with one element: -2472806.784. That's the sum. But the amount needs to be formatted as a dollar value with two decimal places. The database stores amounts as numbers, so I need to round it to two decimal places.\n\nT"
+    },
+    {
+      "test_id": "TC009",
+      "question": "Show me my ATM withdrawals in June 2023, sorted by amount (smallest first)",
+      "passed": false,
+      "overall_score": 0.7083333333333333,
+      "latency_seconds": 86.79543471336365,
+      "tier1_score": 0.6666666666666666,
+      "tier2_score": 1.0,
+      "tier3_score": 0.5,
+      "generated_sql": "SELECT txn_id, txn_date, desc, merchant, cat, amt, acc_id, bank_id FROM transactions WHERE clnt_id = 880 AND cat = 'ATM' AND txn_date LIKE '%/06/2023%' AND amt < 0 ORDER BY amt ASC LIMIT 5",
+      "response": "Okay, let's process the user's query step by step. The user asked for ATM withdrawals in June 2023, sorted by amount from smallest to largest.\n\nFirst, I used vector_search for \"ATM\" to get the exact category and merchant values. The response showed that the category is 'ATM' and the merchant is 'Allpoint ATM'. So I constructed the SQL query to filter transactions with clnt_id = 880, category 'ATM', date in June 2023 (txn_date LIKE '%/06/2023%'), and negative amounts (withdrawals). Then I ordered"
+    },
+    {
+      "test_id": "TC010",
+      "question": "Compare my spending on restaurants vs groceries",
+      "passed": true,
+      "overall_score": 1.0,
+      "latency_seconds": 94.01377892494202,
+      "tier1_score": 1.0,
+      "tier2_score": 1.0,
+      "tier3_score": 1.0,
+      "generated_sql": "SELECT cat, SUM(amt) AS total_spending FROM transactions WHERE clnt_id = 880 AND (cat = 'Restaurants' OR cat = 'Supermarkets and Groceries') AND amt < 0 GROUP BY cat",
+      "response": "Okay, let's break this down. The user wants to compare their spending on restaurants versus groceries. I first used vector_search to find the exact category names. The results showed that \"Restaurants\" is the category for food places and \"Supermarkets and Groceries\" for grocery stores.\n\nThen I wrote an SQL query to sum the negative amounts (spending) for those two categories where the client ID is 880. The query was executed via sql_db_query, and the response gave two entries: Restaurants with -"
+    }
+  ]
+}
